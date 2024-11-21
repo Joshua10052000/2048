@@ -1,0 +1,26 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  --primary: 27, 14%, 55%;
+  --secondary: 33, 22%, 67%;
+  --secondary-foreground: 31, 18%, 39%;
+  --radius: 0.5rem;
+}
+
+body {
+  min-height: 100vh;
+  height: 100%;
+  font-family: "Rubik", sans-serif;
+}
+
+main {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
