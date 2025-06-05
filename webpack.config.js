@@ -29,7 +29,7 @@ const config = {
     ],
   },
   resolve: {
-    extensions: [".js", ".ts"],
+    extensions: [".js", ".ts", ".css"],
     alias: {
       "@": path.resolve("./src/"),
     },
