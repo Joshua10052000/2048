@@ -1,18 +1,14 @@
-// @ts-check
+import Tile from "@/model/tile";
 
-import Tile from "./tile.js";
+interface GridOptions {
+  nodeGrid: HTMLElement;
+}
 
 class Grid {
-  /**
-   * @type { Tile[] }
-   */
-  #tiles;
+  #tiles: Tile[];
   #nodeGrid;
 
-  /**
-   * @param {{ nodeGrid: HTMLElement }} args
-   */
-  constructor(args) {
+  constructor(args: GridOptions) {
     this.#nodeGrid = args.nodeGrid;
     this.#tiles = [];
   }
@@ -25,17 +21,11 @@ class Grid {
     return this.#nodeGrid;
   }
 
-  /**
-   * @param { Tile[] } tiles
-   */
   set tiles(tiles) {
     this.#tiles = tiles;
   }
 
-  /**
-   * @param { Tile } tile
-   */
-  addTile(tile) {
+  addTile(tile: Tile) {
     this.tiles = [...this.tiles, tile];
     this.nodeGrid.append(tile.nodeTile);
   }
@@ -51,7 +41,7 @@ class Grid {
     this.addTile(tile);
   }
 
-  getRandomPosition() {
+  getRandomPosition(): { row: number; column: number } {
     const row = Math.floor(Math.random() * 4) + 1;
     const column = Math.floor(Math.random() * 4) + 1;
 
@@ -64,12 +54,7 @@ class Grid {
     return { row, column };
   }
 
-  /**
-   * @param { number } row
-   * @param { number } column
-   * @returns { Tile | undefined }
-   */
-  getTile(row, column) {
+  getTile(row: number, column: number) {
     const tile = this.tiles.find(
       (tile) => tile.row === row && tile.column === column
     );
@@ -77,12 +62,7 @@ class Grid {
     return tile;
   }
 
-  /**
-   * @param { Tile } tile
-   * @param { Tile } nextTile
-   * @returns { boolean }
-   */
-  getCanMerge(tile, nextTile) {
+  getCanMerge(tile: Tile, nextTile: Tile) {
     const canMerge = tile.value === nextTile.value;
 
     return canMerge;
@@ -99,7 +79,7 @@ class Grid {
         .filter((tile) => tile.row === row)
         .sort((a, b) => b.column - a.column);
 
-      rowTiles.forEach((rowTile, index) => {
+      rowTiles.forEach((rowTile) => {
         let { column } = rowTile;
         let nextColumn = column;
         let merged = false;
@@ -379,17 +359,12 @@ class Grid {
     }
   }
 
-  /**
-   * @param { Tile[] } originalTiles
-   * @param { Tile[] } updatedTiles
-   * @returns
-   */
-  didMoveOrMergeOccurred(originalTiles, updatedTiles) {
+  didMoveOrMergeOccurred(originalTiles: Tile[], updatedTiles: Tile[]) {
     return (
       originalTiles.length !== updatedTiles.length ||
       !originalTiles.every((tile, index) => {
         return (
-          tile.row === updatedTiles[index].row &&
+          tile.row === updatedTiles[index]?.row &&
           tile.column === updatedTiles[index].column &&
           tile.value === updatedTiles[index].value
         );
@@ -401,9 +376,6 @@ class Grid {
     return this.tiles.some((tile) => tile.value === 2048);
   }
 
-  /**
-   * @returns {boolean}
-   */
   canMove() {
     if (this.tiles.length < 16) {
       return true;

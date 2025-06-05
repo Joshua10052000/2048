@@ -1,4 +1,9 @@
-// @ts-check
+interface TileOptions {
+  nodeTile: HTMLDivElement;
+  row: number;
+  column: number;
+  value: number;
+}
 
 class Tile {
   #nodeTile;
@@ -6,10 +11,7 @@ class Tile {
   #column;
   #value;
 
-  /**
-   * @param {{ nodeTile: HTMLDivElement; row: number; column: number; value: number; }} args
-   */
-  constructor(args) {
+  constructor(args: TileOptions) {
     this.#nodeTile = args.nodeTile;
     this.#row = args.row;
     this.#column = args.column;
@@ -54,20 +56,13 @@ class Tile {
     this.nodeTile.dataset.value = `${this.value}`;
   }
 
-  /**
-   * @param { number } row
-   * @param { number } column
-   */
-  updatePosition(row, column) {
+  updatePosition(row: number, column: number) {
     this.row = row;
     this.column = column;
     this.updateNode();
   }
 
-  /**
-   * @param {number} value
-   */
-  updateValue(value) {
+  updateValue(value: number) {
     this.value = value;
     this.updateNode();
   }

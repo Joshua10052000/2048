@@ -1,0 +1,20 @@
+{
+  "name": "@wawads/2048",
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.7.0",
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-typescript": "^7.27.1",
+    "@types/node": "^22.15.29",
+    "babel-loader": "^10.0.0",
+    "html-webpack-plugin": "^5.6.3",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1"
+  }
+}

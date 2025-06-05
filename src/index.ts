@@ -1,6 +1,4 @@
-// @ts-check
-
-import Grid from "./model/grid.js";
+import Grid from "@/model/grid";
 
 const nodeGrid = document.querySelector("article");
 if (!nodeGrid) throw new Error("nodeBoard is undefined.");
@@ -10,7 +8,7 @@ const grid = new Grid({ nodeGrid });
 const rightKeys = ["ArrowRight", "D", "d"];
 const leftKeys = ["ArrowLeft", "A", "a"];
 const topKeys = ["ArrowUp", "W", "w"];
-const bottomKeys = ["ArrowDown", "s", "s"];
+const bottomKeys = ["ArrowDown", "S", "s"];
 
 grid.generateTile();
 grid.generateTile();
