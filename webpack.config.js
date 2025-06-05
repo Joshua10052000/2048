@@ -11,7 +11,7 @@ process.loadEnvFile();
 const config = {
   // @ts-ignore
   mode: process.env.NODE_ENV,
-  entry: path.resolve("./src/index.ts"),
+  entry: path.resolve("./src/index.tsx"),
   output: {
     filename: "main.js",
     path: path.resolve("./build/"),
@@ -19,11 +19,7 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.ts$/,
-        use: [{ loader: "ts-loader", options: { transpileOnly: true } }],
-      },
-      {
-        test: /\.(?:js|mjs|cjs)$/,
+        test: /\.(?:js|mjs|cjs|tsx)$/,
         use: [{ loader: "babel-loader" }],
       },
       {
@@ -37,7 +33,7 @@ const config = {
     ],
   },
   resolve: {
-    extensions: [".js", ".ts", ".css"],
+    extensions: [".js", ".ts", ".css", ".tsx", ".jsx"],
     alias: {
       "@": path.resolve("./src/"),
     },
