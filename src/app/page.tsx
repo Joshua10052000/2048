@@ -1,7 +1,12 @@
+import { GameBoard } from "@/components/game/board";
 import * as React from "react";
 
 function Homepage() {
-  return <div>Homepage</div>;
+  return (
+    <div className="grid min-h-screen place-items-center">
+      <GameBoard />
+    </div>
+  );
 }
 
 export default Homepage;
