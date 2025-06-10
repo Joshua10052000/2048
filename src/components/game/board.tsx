@@ -136,7 +136,7 @@ function GameBoard({
     let hasMoved = false;
 
     for (const [group, groupTiles] of Object.entries(groupedTiles)) {
-      let pos = direction === "left" || direction === "up" ? 1 : limit;
+      let position = direction === "left" || direction === "up" ? 1 : limit;
 
       if (!groupTiles) {
         continue;
@@ -156,29 +156,29 @@ function GameBoard({
 
           const tile: GameTile = {
             ...currentTile,
-            row: isHorizontal ? positionKey(group) : pos,
-            column: isHorizontal ? pos : positionKey(group),
+            row: isHorizontal ? positionKey(group) : position,
+            column: isHorizontal ? position : positionKey(group),
             value: currentTile.value * 2,
           };
 
           updatedTiles.push(tile);
-          pos += direction === "left" || direction === "up" ? 1 : -1;
+          position += direction === "left" || direction === "up" ? 1 : -1;
         } else {
           if (
-            (isHorizontal && currentTile.column !== pos) ||
-            (!isHorizontal && currentTile.row !== pos)
+            (isHorizontal && currentTile.column !== position) ||
+            (!isHorizontal && currentTile.row !== position)
           ) {
             hasMoved = true;
           }
 
           const tile: GameTile = {
             ...currentTile,
-            row: isHorizontal ? positionKey(group) : pos,
-            column: isHorizontal ? pos : positionKey(group),
+            row: isHorizontal ? positionKey(group) : position,
+            column: isHorizontal ? position : positionKey(group),
           };
 
           updatedTiles.push(tile);
-          pos += direction === "left" || direction === "up" ? 1 : -1;
+          position += direction === "left" || direction === "up" ? 1 : -1;
         }
       }
     }
@@ -214,19 +214,17 @@ function GameBoard({
       "keydown",
       (e) => {
         setTiles((tiles) => {
-          let updatedTiles: GameTile[] = [];
-
           if (e.key === "ArrowRight") {
-            updatedTiles = moveTiles(tiles, "right", board);
+            tiles = moveTiles(tiles, "right", board);
           } else if (e.key === "ArrowLeft") {
-            updatedTiles = moveTiles(tiles, "left", board);
+            tiles = moveTiles(tiles, "left", board);
           } else if (e.key === "ArrowUp") {
-            updatedTiles = moveTiles(tiles, "up", board);
+            tiles = moveTiles(tiles, "up", board);
           } else if (e.key === "ArrowDown") {
-            updatedTiles = moveTiles(tiles, "down", board);
+            tiles = moveTiles(tiles, "down", board);
           }
 
-          return updatedTiles;
+          return tiles;
         });
       },
       { signal: abortController.signal },
