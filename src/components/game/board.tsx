@@ -108,24 +108,43 @@ function GameBoard({
     return randomTile;
   };
 
-  const moveRight = (tiles: GameTile[]) => {
+  type Direction = "left" | "right" | "up" | "down";
+
+  const moveTiles = (
+    tiles: GameTile[],
+    direction: Direction,
+    board: { rows: number; columns: number },
+  ) => {
     const updatedTiles: GameTile[] = [];
-    const rowsTiles = Object.groupBy(
-      tiles.toSorted((a, b) => b.column - a.column),
-      (tile) => tile.row,
-    );
+    const isHorizontal = direction === "left" || direction === "right";
+    const sortFn = (a: GameTile, b: GameTile) => {
+      if (direction === "left") return a.column - b.column;
+      if (direction === "right") return b.column - a.column;
+      if (direction === "up") return a.row - b.row;
+
+      return b.row - a.row;
+    };
+
+    const groupKey = (tile: GameTile) =>
+      isHorizontal ? tile.row : tile.column;
+    const positionKey = (group: string) =>
+      isHorizontal ? parseInt(group) : parseInt(group);
+    const limit = isHorizontal ? board.columns : board.rows;
+
+    const groupedTiles = Object.groupBy(tiles.toSorted(sortFn), groupKey);
+
     let hasMoved = false;
 
-    for (const [row, rowTiles] of Object.entries(rowsTiles)) {
-      let column = board.columns;
+    for (const [group, groupTiles] of Object.entries(groupedTiles)) {
+      let pos = direction === "left" || direction === "up" ? 1 : limit;
 
-      if (!rowTiles) {
+      if (!groupTiles) {
         continue;
       }
 
-      while (rowTiles.length > 0) {
-        const currentTile = rowTiles.shift();
-        const nextTile = rowTiles[0];
+      while (groupTiles.length > 0) {
+        const currentTile = groupTiles.shift();
+        const nextTile = groupTiles[0];
 
         if (!currentTile) {
           continue;
@@ -133,204 +152,33 @@ function GameBoard({
 
         if (nextTile && nextTile.value === currentTile.value) {
           hasMoved = true;
-          rowTiles.shift();
+          groupTiles.shift();
 
           const tile: GameTile = {
-            id: crypto.randomUUID(),
-            row: parseInt(row),
-            column: column--,
+            ...currentTile,
+            row: isHorizontal ? positionKey(group) : pos,
+            column: isHorizontal ? pos : positionKey(group),
             value: currentTile.value * 2,
           };
 
           updatedTiles.push(tile);
+          pos += direction === "left" || direction === "up" ? 1 : -1;
         } else {
-          if (currentTile.column !== column) {
+          if (
+            (isHorizontal && currentTile.column !== pos) ||
+            (!isHorizontal && currentTile.row !== pos)
+          ) {
             hasMoved = true;
           }
 
           const tile: GameTile = {
             ...currentTile,
-            column: column--,
+            row: isHorizontal ? positionKey(group) : pos,
+            column: isHorizontal ? pos : positionKey(group),
           };
 
           updatedTiles.push(tile);
-        }
-      }
-    }
-
-    if (hasMoved) {
-      const randomTile = createRandomTile(updatedTiles);
-
-      if (randomTile) {
-        updatedTiles.push(randomTile);
-      }
-    }
-
-    return updatedTiles;
-  };
-
-  const moveLeft = (tiles: GameTile[]) => {
-    {
-      const updatedTiles: GameTile[] = [];
-      const rowsTiles = Object.groupBy(
-        tiles.toSorted((a, b) => a.column - b.column),
-        (tile) => tile.row,
-      );
-      let hasMoved = false;
-
-      for (const [row, rowTiles] of Object.entries(rowsTiles)) {
-        let column = 1;
-
-        if (!rowTiles) continue;
-
-        while (rowTiles.length > 0) {
-          const currentTile = rowTiles.shift();
-          const nextTile = rowTiles[0];
-
-          if (!currentTile) continue;
-
-          if (nextTile && nextTile.value === currentTile.value) {
-            hasMoved = true;
-            rowTiles.shift();
-
-            const tile: GameTile = {
-              id: crypto.randomUUID(),
-              row: parseInt(row),
-              column: column++,
-              value: currentTile.value * 2,
-            };
-
-            updatedTiles.push(tile);
-          } else {
-            if (currentTile.column !== column) {
-              hasMoved = true;
-            }
-
-            const tile = {
-              ...currentTile,
-              column: column++,
-            };
-
-            updatedTiles.push(tile);
-          }
-        }
-      }
-
-      if (hasMoved) {
-        const randomTile = createRandomTile(updatedTiles);
-        if (randomTile) {
-          updatedTiles.push(randomTile);
-        }
-      }
-
-      return updatedTiles;
-    }
-  };
-
-  const moveUp = (tiles: GameTile[]) => {
-    const updatedTiles: GameTile[] = [];
-    const columnsTiles = Object.groupBy(
-      tiles.toSorted((a, b) => a.row - b.row),
-      (tile) => tile.column,
-    );
-
-    let hasMoved = false;
-
-    for (const [column, columnTiles] of Object.entries(columnsTiles)) {
-      let row = 1;
-
-      if (!columnTiles) {
-        continue;
-      }
-
-      while (columnTiles.length > 0) {
-        const currentTile = columnTiles.shift();
-        const nextTile = columnTiles[0];
-
-        if (!currentTile) {
-          continue;
-        }
-
-        if (nextTile && nextTile.value === currentTile.value) {
-          hasMoved = true;
-          columnTiles.shift();
-
-          const tile: GameTile = {
-            id: crypto.randomUUID(),
-            column: parseInt(column),
-            row: row++,
-            value: currentTile.value * 2,
-          };
-
-          updatedTiles.push(tile);
-        } else {
-          if (currentTile.row !== row) {
-            hasMoved = true;
-          }
-
-          const tile: GameTile = {
-            ...currentTile,
-            row: row++,
-          };
-
-          updatedTiles.push(tile);
-        }
-      }
-    }
-
-    if (hasMoved) {
-      const randomTile = createRandomTile(updatedTiles);
-
-      if (randomTile) {
-        updatedTiles.push(randomTile);
-      }
-    }
-
-    return updatedTiles;
-  };
-
-  const moveDown = (tiles: GameTile[]) => {
-    const updatedTiles: GameTile[] = [];
-    const columnsTiles = Object.groupBy(
-      tiles.toSorted((a, b) => b.row - a.row),
-      (tile) => tile.column,
-    );
-    let hasMoved = false;
-
-    for (const [column, columnTiles] of Object.entries(columnsTiles)) {
-      let row = board.rows;
-
-      if (!columnTiles) continue;
-
-      while (columnTiles.length > 0) {
-        const currentTile = columnTiles.shift();
-        const nextTile = columnTiles[0];
-
-        if (!currentTile) continue;
-
-        if (nextTile && nextTile.value === currentTile.value) {
-          hasMoved = true;
-          columnTiles.shift();
-
-          const tile: GameTile = {
-            id: crypto.randomUUID(),
-            column: parseInt(column),
-            row: row--,
-            value: currentTile.value * 2,
-          };
-
-          updatedTiles.push(tile);
-        } else {
-          if (currentTile.row !== row) {
-            hasMoved = true;
-          }
-
-          const tile: GameTile = {
-            ...currentTile,
-            row: row--,
-          };
-
-          updatedTiles.push(tile);
+          pos += direction === "left" || direction === "up" ? 1 : -1;
         }
       }
     }
@@ -366,17 +214,19 @@ function GameBoard({
       "keydown",
       (e) => {
         setTiles((tiles) => {
+          let updatedTiles: GameTile[] = [];
+
           if (e.key === "ArrowRight") {
-            return moveRight(tiles);
+            updatedTiles = moveTiles(tiles, "right", board);
           } else if (e.key === "ArrowLeft") {
-            return moveLeft(tiles);
+            updatedTiles = moveTiles(tiles, "left", board);
           } else if (e.key === "ArrowUp") {
-            return moveUp(tiles);
+            updatedTiles = moveTiles(tiles, "up", board);
           } else if (e.key === "ArrowDown") {
-            return moveDown(tiles);
+            updatedTiles = moveTiles(tiles, "down", board);
           }
 
-          return tiles;
+          return updatedTiles;
         });
       },
       { signal: abortController.signal },
